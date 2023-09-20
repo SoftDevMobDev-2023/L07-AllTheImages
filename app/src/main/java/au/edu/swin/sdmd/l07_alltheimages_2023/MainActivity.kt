@@ -1,6 +1,7 @@
 package au.edu.swin.sdmd.l07_alltheimages_2023
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
         val data = initData()
 
-        adapter = TheAdapter(data) { showDetail(it) }
+        adapter = TheAdapter(data) { showDialog(it) }
         listView.adapter = adapter
     }
 
@@ -29,6 +30,18 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, DetailActivity::class.java)
         intent.putExtra("location", item)
         startActivity(intent)
+    }
+
+    private fun showMap(item: Location) {
+        val gmmIntentUri = Uri.parse("geo:${item.latitude},${item.longitude}")
+        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+        // comment this out to become an implicit intent
+        //mapIntent.setPackage("com.google.android.apps.maps")
+        startActivity(mapIntent)
+    }
+
+    private fun showDialog(item: Location) {
+        ItemDialogFragment.newInstance(item).show(supportFragmentManager, "dialog")
     }
 
 
@@ -60,6 +73,8 @@ class MainActivity : AppCompatActivity() {
             -37.821946f, 145.023194f))
         data.add(Location("Office building", "unknown",
             -37.822170f, 145.029600f))
+        // just for some extra rows to play with recycling
+        for (i in 1..500) data.add(Location("Sarawak", "unknown", 1.5324f, 110.3572f))
         return data
     }
 }
